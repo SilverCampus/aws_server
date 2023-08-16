@@ -3,7 +3,10 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['never.com'] # 도메인, IP
+ALLOWED_HOSTS = [
+    '43.200.8.110',
+    '*',
+] # 도메인, IP
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
 
