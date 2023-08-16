@@ -43,7 +43,6 @@ def get_secret(setting, secrets_dict=secrets):
 		raise ImproperlyConfigured(error_msg)
 	
 SECRET_KEY = get_secret('SECRET_KEY')
-print(f'SECRET_KEY={get_secret("SECRET_KEY")}')
 	
 # Application definition
 DJANGO_APPS = [
