@@ -62,6 +62,9 @@ class BasicCourceInfoSerializer(serializers.ModelSerializer):
     instructor = serializers.SerializerMethodField()
     is_this_instructor = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
+    category_name = serializers.SerializerMethodField()
+
+
 
     class Meta:
         model = Course
@@ -91,6 +94,9 @@ class BasicCourceInfoSerializer(serializers.ModelSerializer):
             return False
         
         return True
+
+    def get_category_name(self, obj):
+        return obj.category.name
 
 
 class GetCourseListCompletionRateSerializer(serializers.ModelSerializer):
