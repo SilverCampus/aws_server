@@ -68,7 +68,7 @@ class BasicCourceInfoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'price', 'description', 'instructor', 'category', 'thumbnail', 'is_live', 'video_count', 'credits', 'is_this_instructor', 'is_liked']
+        fields = ['id', 'title', 'price', 'description', 'instructor', 'category_name', 'thumbnail', 'is_live', 'video_count', 'credits', 'is_this_instructor', 'is_liked']
 
     def get_video_count(self, obj):
         return obj.video.count() # obj는 현재 Course 인스턴스입니다. video_count 메서드를 호출해 개수를 반환합니다.
