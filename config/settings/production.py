@@ -20,6 +20,9 @@ DATABASES = {
     }
 }
 
+
+STATIC_ROOT = BASE_DIR / 'static'
+
 # log
 LOG_FILE = '/home/ubuntu/aws_server/log/django.log'
 LOGGING = {
@@ -102,6 +105,3 @@ LOGGING = {
         },
     }
 }
-
-
-STATIC_ROOT = BASE_DIR / 'static'
