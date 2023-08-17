@@ -583,7 +583,8 @@ def basic_cource_info(request): # 쿼리 파라미터로 받아야 할 정보: c
     except ObjectDoesNotExist:
         return Response({"error": "there is no Course"}, status=status.HTTP_400_BAD_REQUEST)
     
-        # Serializer를 사용해 JSON 응답 생성
+
+        # Serializer를 사용해 JSON 응답 생성 하기
     serializer = BasicCourceInfoSerializer(course, context={'user': user})
     return Response(serializer.data, status=status.HTTP_200_OK)
 

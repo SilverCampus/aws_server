@@ -64,6 +64,8 @@ class BasicCourceInfoSerializer(serializers.ModelSerializer):
     is_liked = serializers.SerializerMethodField()
     category_name = serializers.SerializerMethodField()
 
+
+
     class Meta:
         model = Course
         fields = ['id', 'title', 'price', 'description', 'instructor', 'category', 'thumbnail', 'is_live', 'video_count', 'credits', 'is_this_instructor', 'is_liked']
