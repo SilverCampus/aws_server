@@ -5,7 +5,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '43.200.8.110',
-    '*',
+    ".silvercampus.shop",
 ] # 도메인, IP
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
