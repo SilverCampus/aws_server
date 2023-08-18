@@ -18,7 +18,7 @@ class BoardPost(models.Model):
     hashtags = models.ForeignKey(Hashtag, related_name='posts', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.title
+        return self.content
     
 
 class BoardComment(models.Model):
