@@ -45,10 +45,13 @@ class PostUploadSerializer(serializers.ModelSerializer):
 class GetAllBoardPostsSerializer(serializers.ModelSerializer):
     hashtag_name = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
+    user_grade = serializers.SerializerMethodField()
+    user_name = serializers.SerializerMethodField()
+
 
     class Meta:
         model = BoardPost
-        fields = ['user', 'content', 'video', 'video_thumbnail', 'created_at', 'hashtag_name', 'is_liked']
+        fields = ['user_name', 'user_grade', 'content', 'video', 'video_thumbnail', 'created_at', 'hashtag_name', 'is_liked']
         
 
     def get_hashtag_name(self, obj):
@@ -62,3 +65,11 @@ class GetAllBoardPostsSerializer(serializers.ModelSerializer):
             return False
         
         return True         
+    
+    def get_user_name(self, obj):
+        user = self.context.get('user')
+        return user.nickname
+    
+    def get_user_grade(self, obj):
+        user = self.context.get('user')
+        return user.grade
