@@ -42,6 +42,13 @@ class PostUploadSerializer(serializers.ModelSerializer):
         model = BoardPost
         fields = '__all__'
 
+class BoardPostByHashtagSerializer(serializers.ModelSerializer):
+    hashtags = serializers.StringRelatedField()
+
+    class Meta:
+        model = BoardPost
+        fields = ('id', 'user', 'content', 'video', 'video_thumbnail', 'created_at', 'hashtags')
+
 class GetAllBoardPostsSerializer(serializers.ModelSerializer):
     hashtag_name = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()

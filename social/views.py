@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from .models import BoardPost, BoardComment, BoardPostLike, Hashtag
 from .serializers import (
     BoardPostSerializer, BoardCommentSerializer, BoardPostLikeSerializer, AuthorSerializer, PostCommentSerializer,
-    PostUploadSerializer, HashtagSerializer, GetAllBoardPostsSerializer)
+    PostUploadSerializer, HashtagSerializer, GetAllBoardPostsSerializer, BoardPostByHashtagSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -179,8 +179,9 @@ def hashtag_list(request):
 @permission_classes((permissions.AllowAny,))
 def posts_by_hashtag(request, hashtag_name):
     posts = BoardPost.objects.filter(hashtags__name=hashtag_name)
-    serializer = BoardPostSerializer(posts, many=True)
+    serializer = BoardPostByHashtagSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
     
 
 # 7. 로그인한 사용자가 작성한 글을 가져오는 API
