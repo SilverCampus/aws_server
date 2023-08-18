@@ -75,9 +75,9 @@ class GetAllBoardPostsSerializer(serializers.ModelSerializer):
         return True         
     
     def get_user_name(self, obj):
-        user = self.context.get('user')
+        user = obj.user
         return user.nickname
     
     def get_user_grade(self, obj):
-        user = self.context.get('user')
+        user = obj.user
         return user.grade
