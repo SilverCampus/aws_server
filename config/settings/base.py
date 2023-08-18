@@ -106,6 +106,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://client-orpin-five.vercel.app",
     "https://www.silvercampus.shop",
+    "http://43.200.8.110",
+    "https://43.200.8.110",
+
 
 ]
 
@@ -115,6 +118,10 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://client-orpin-five.vercel.app",
     "https://www.silvercampus.shop",
+    "http://43.200.8.110",
+    "https://43.200.8.110",
+
+
 
 ]
 ROOT_URLCONF = 'config.urls'
