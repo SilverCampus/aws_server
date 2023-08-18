@@ -149,6 +149,7 @@ def post_upload(request):
 
         os.unlink(temp_video_file.name) # 임시 비디오 파일 삭제
 
+
     # 게시물 저장
     post = BoardPost(
         user=user,
@@ -192,6 +193,7 @@ def my_posts(request):
 
 # 8. boardpost 모델에서 글 가져오는 API
 @api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated,))
 def get_all_board_posts(request):
     if request.method == 'GET':
         posts = BoardPost.objects.all()
