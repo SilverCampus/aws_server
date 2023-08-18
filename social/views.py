@@ -102,13 +102,13 @@ def add_like(request):
 
 
 # 4. 로그인한 사용자가 새로운 게시글을 게시하는 API
-# 4번
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
 def post_upload(request):
     user = request.user
 
     # 프론트엔드로부터 받는 정보
+    title = request.data.get('title')
     content = request.data.get('content')
     video_file = request.FILES.get('video_file')
     hashtags_name = request.data.get('hashtags')
@@ -137,8 +137,7 @@ def post_upload(request):
         temp_video_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
         for chunk in video_file.chunks():
             temp_video_file.write(chunk)
-        temp_video_file.flush()  # 파일에 쓰기 작업을 강제로 완료
-        temp_video_file.close()  # 파일 닫기
+        temp_video_file.flush()
 
         with VideoFileClip(temp_video_file.name) as clip:
             thumbnail_path = os.path.join("/tmp", f"thumb_{os.path.basename(video_file.name)}.png")
@@ -154,22 +153,19 @@ def post_upload(request):
 
         os.unlink(temp_video_file.name) # 임시 비디오 파일 삭제
 
-
     # 게시물 저장
     post = BoardPost(
         user=user,
-        # title=title,
+        title=title,
         content=content,
         video=video_url,
-        # video_thumbnail=thumbnail_url,
+        video_thumbnail=thumbnail_url,
         hashtags=hashtag
     )
     post.save()
 
     serializer = PostUploadSerializer(post)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 
 
 ## 5. hashtag 리스트 불러오는 api
