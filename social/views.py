@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from .models import BoardPost, BoardComment, BoardPostLike, Hashtag
 from .serializers import (
     BoardPostSerializer, BoardCommentSerializer, BoardPostLikeSerializer, AuthorSerializer, PostCommentSerializer,
-    PostUploadSerializer, HashtagSerializer, GetAllBoardPostsSerializer)
+    PostUploadSerializer, HashtagSerializer, PostsByHashtagSerializer, GetAllBoardPostsSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -18,6 +18,8 @@ from moviepy.editor import VideoFileClip
 from django.conf import settings
 import tempfile
 from tempfile import NamedTemporaryFile
+from django.core.exceptions import ObjectDoesNotExist
+
 
 
 class BoardPostViewSet(viewsets.ModelViewSet):
@@ -37,8 +39,8 @@ class BoardPostLikeViewSet(viewsets.ModelViewSet):
 # 프론트로부터 넘겨 받아야 할 정보: post_id
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
-def get_post_details(request):
-    post_id = request.GET.get('post_id')
+def get_post_details(request, post_id):
+    post_id = post_id
 
     # 특정 post 정보 뽑아오기
     try:
@@ -56,7 +58,7 @@ def get_post_details(request):
     likes_count = likes.count()
     
     # 해시태그 정보 가져오기
-    hashtags_serializer = HashtagSerializer(post.hashtags.all(), many=True)
+    hashtags_serializer = HashtagSerializer(post.hashtags)
     
     post_data = BoardPostSerializer(post).data
     post_data['author'] = author_serializer.data
@@ -65,7 +67,6 @@ def get_post_details(request):
     post_data['hashtags'] = hashtags_serializer.data
     
     return Response(post_data, status=status.HTTP_200_OK)
-
 
 # 2. 댓글 추가 비동기 API
 # 댓글 추가, 새로고침 안되도록
@@ -83,26 +84,39 @@ def add_comment(request):
     serializer = BoardCommentSerializer(comment)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 # 3. 좋아요 추가 비동기 API
 # 좋아요 추가, 새로고침 안되도록
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
 def add_like(request):
-    post_id = request.data.get('post_id')
+
+    user = request.user    
+    post_id = request.data.get('post_id')   # 프론트로부터 이거 받아야 함!
     
-    post = BoardPost.objects.get(id=post_id)
-    
-    if BoardPostLike.objects.filter(post=post, user=request.user).exists():
-        return Response({'detail': 'Already liked.'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    like = BoardPostLike(post=post, user=request.user)
-    like.save()
-    
-    serializer = BoardPostLikeSerializer(like)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+    try: # post_id에 해당하는 객체 있는지 없는지 체크
+        post = BoardPost.objects.get(id=post_id)
+    except:
+        return Response("해당 BoardPost 객체 없어!", status=status.HTTP_200_OK)
 
 
-# 4. 로그인한 사용자가 새로운 게시글을 게시하는 API
+    # 좋아요 안 눌렀으면 누르게 바꾸고, 이미 눌러있으면 다시 삭제
+    try:
+        boardpostlike = BoardPostLike.objects.get(user=user, post_id=post_id)
+    except:
+        boardpostlike = BoardPostLike (
+            user = user,
+            post = post
+        )
+        boardpostlike.save()
+        return Response("좋아요 추가!", status=status.HTTP_200_OK)
+
+    boardpostlike.delete()
+    return Response("좋아요 삭제!", status=status.HTTP_200_OK)
+    
+
+
+# 4번 (ok)
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
 def post_upload(request):
@@ -167,23 +181,30 @@ def post_upload(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-## 5. hashtag 리스트 불러오는 api
+
+## 5. hashtag 리스트 불러오는 api (ok)
 @api_view(['GET'])
 def hashtag_list(request):
     hashtags = Hashtag.objects.all()
     serializer = HashtagSerializer(hashtags, many=True)
     return Response(serializer.data)
 
+
 ## 6. hashtag 필터링
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def posts_by_hashtag(request, hashtag_name):
-    posts = BoardPost.objects.filter(hashtags__name=hashtag_name)
-    serializer = BoardPostSerializer(posts, many=True)
+    try:
+        hashtag = Hashtag.objects.get(name=hashtag_name)
+    except ObjectDoesNotExist:     
+        return Response({"data":"There is no object."}, status=status.HTTP_200_OK)
+    
+    posts = BoardPost.objects.filter(hashtags = hashtag)
+    serializer = PostsByHashtagSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
     
 
-# 7. 로그인한 사용자가 작성한 글을 가져오는 API
+# 7. 로그인한 사용자가 작성한 글을 가져오는 API (ok)
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))
 def my_posts(request):
@@ -203,3 +224,4 @@ def get_all_board_posts(request):
         serializer = GetAllBoardPostsSerializer(posts, many=True, context={"user":user})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
