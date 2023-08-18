@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from .models import BoardPost, BoardComment, BoardPostLike, Hashtag
 from .serializers import (
     BoardPostSerializer, BoardCommentSerializer, BoardPostLikeSerializer, AuthorSerializer, PostCommentSerializer,
-    PostUploadSerializer, HashtagSerializer)
+    PostUploadSerializer, HashtagSerializer, GetAllBoardPostsSerializer)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -182,7 +182,7 @@ def posts_by_hashtag(request, hashtag_name):
     serializer = BoardPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
     
-    
+
 # 7. 로그인한 사용자가 작성한 글을 가져오는 API
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))
@@ -192,11 +192,14 @@ def my_posts(request):
     serializer = BoardPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-# 8. boardpost 모델에서 글 가져오는 API
+# 8. boardpost 모델에서 글 가져오는 API (ok)
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))
 def get_all_board_posts(request):
+    user = request.user
+    
     if request.method == 'GET':
         posts = BoardPost.objects.all()
-        serializer = BoardPostSerializer(posts, many=True)
-        return Response(serializer.data)
+        serializer = GetAllBoardPostsSerializer(posts, many=True, context={"user":user})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
