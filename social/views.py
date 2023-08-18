@@ -140,7 +140,7 @@ def post_upload(request):
     #             post.image.save(f"thumb_{video_file.name}.png", ContentFile(thumb_file.read()))
     #             os.remove(thumbnail_path)  # 임시 썸네일 파일 삭제
 
-    post.save()
+    # post.save()
 
     serializer = PostUploadSerializer(post)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
