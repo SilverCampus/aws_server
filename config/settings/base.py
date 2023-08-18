@@ -101,14 +101,21 @@ MIDDLEWARE = [
 
 # CORS 설정
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
-
-# CSRF 설정
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:8000",
-    "https://client-orpin-five.vercel.app/",
+    "https://client-orpin-five.vercel.app",
     "https://www.silvercampus.shop",
+
+]
+
+# CSRF 설정
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",
+    "https://client-orpin-five.vercel.app",
+    "https://www.silvercampus.shop",
+
 ]
 ROOT_URLCONF = 'config.urls'
 
