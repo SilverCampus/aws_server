@@ -99,8 +99,12 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+# CORS 설정
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
 
+# CSRF 설정
+CSRF_TRUSTED_ORIGINS = True
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
