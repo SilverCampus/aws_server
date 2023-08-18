@@ -182,6 +182,7 @@ def posts_by_hashtag(request, hashtag_name):
     serializer = BoardPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
     
+    
 # 7. 로그인한 사용자가 작성한 글을 가져오는 API
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))
