@@ -107,14 +107,12 @@ def post_upload(request):
     content = request.data.get('content')
     image_file = request.FILES.get('image_file')
     video_file = request.FILES.get('video_file')
-    hashtags_name = request.data.get('hashtag')
+    hashtags_name = request.data.get('hashtags')
 
     # # 해시태그 연결
     try:
-        hashtag_name = "#" + str(hashtags_name)
-        hashtag = Hashtag.objects.get(name=hashtag_name)
+        hashtag = Hashtag.objects.get(name=hashtags_name)
         
-
     except Hashtag.DoesNotExist:
         hashtag = None   
 
@@ -130,18 +128,19 @@ def post_upload(request):
     
     post.save() # BoardPost 객체 저장
 
-    # 영상에서 썸네일 생성
-    if video_file:
-        with VideoFileClip(video_file.temporary_file_path()) as clip:
-            thumbnail_path = os.path.join("/tmp", f"thumb_{os.path.basename(video_file.name)}.png")
-            clip.save_frame(thumbnail_path, t=1.00)  # 1초 지점의 프레임 저장
 
-            with open(thumbnail_path, 'rb') as thumb_file:
-                # 썸네일을 Django의 FileField로 변환하여 저장
-                post.image.save(f"thumb_{video_file.name}.png", ContentFile(thumb_file.read()))
-                os.remove(thumbnail_path)  # 임시 썸네일 파일 삭제
+    # # 영상에서 썸네일 생성
+    # if video_file:
+    #     with VideoFileClip(video_file.temporary_file_path()) as clip:
+    #         thumbnail_path = os.path.join("/tmp", f"thumb_{os.path.basename(video_file.name)}.png")
+    #         clip.save_frame(thumbnail_path, t=1.00)  # 1초 지점의 프레임 저장
 
-    post.save
+    #         with open(thumbnail_path, 'rb') as thumb_file:
+    #             # 썸네일을 Django의 FileField로 변환하여 저장
+    #             post.image.save(f"thumb_{video_file.name}.png", ContentFile(thumb_file.read()))
+    #             os.remove(thumbnail_path)  # 임시 썸네일 파일 삭제
+
+    post.save()
 
     serializer = PostUploadSerializer(post)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
