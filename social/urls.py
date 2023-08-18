@@ -10,7 +10,7 @@ router.register('likes', BoardPostLikeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('get-post-details/', get_post_details, name='get-post-details'),
+    path('get-post-details/<int:post_id>/', get_post_details, name='get-post-details'),
     path('add-comment/', views.add_comment, name='add_comment'),
     path('add-like/', views.add_like, name='add_like'),
     path('post-upload/', post_upload, name='post_upload'),

@@ -9,7 +9,6 @@ class HashtagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class BoardPostSerializer(serializers.ModelSerializer):
-    # hashtags = HashtagSerializer(many=True)
 
     class Meta:
         model = BoardPost
@@ -32,7 +31,7 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ('username', 'nickname', 'grade')
 
 class PostCommentSerializer(serializers.ModelSerializer):
-    comment_user = AuthorSerializer(source='user', read_only=True)
+    # comment_user = AuthorSerializer(source='user', read_only=True)
     class Meta:
         model = BoardComment
         fields = ('comment_user', 'content', 'created_at')
@@ -41,6 +40,15 @@ class PostUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = BoardPost
         fields = '__all__'
+
+
+class PostsByHashtagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hashtag
+        fields = '__all__'
+
+
+
 
 class GetAllBoardPostsSerializer(serializers.ModelSerializer):
     hashtag_name = serializers.SerializerMethodField()
