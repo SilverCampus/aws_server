@@ -168,3 +168,11 @@ def my_posts(request):
     posts = BoardPost.objects.filter(user=user).order_by('-created_at')  # 최신글부터 가져오기 위해 '-created_at' 사용
     serializer = BoardPostSerializer(posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# 8. boardpost 모델에서 글 가져오는 API
+@api_view(['GET'])
+def get_all_board_posts(request):
+    if request.method == 'GET':
+        posts = BoardPost.objects.all()
+        serializer = BoardPostSerializer(posts, many=True)
+        return Response(serializer.data)
