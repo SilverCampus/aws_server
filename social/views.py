@@ -168,7 +168,7 @@ def my_posts(request):
 
 # 8. boardpost 모델에서 글 가져오는 API
 @api_view(['GET'])
-@permission_classes((permissions.AllowAny,))
+@permission_classes((permissions.IsAuthenticated,))
 def get_all_board_posts(request):
     if request.method == 'GET':
         posts = BoardPost.objects.all()
