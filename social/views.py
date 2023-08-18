@@ -13,6 +13,11 @@ from django.core.files import File
 from django.core.files.base import ContentFile
 from rest_framework.generics import ListAPIView
 
+import boto3
+from moviepy.editor import VideoFileClip
+from django.conf import settings
+import tempfile
+
 
 class BoardPostViewSet(viewsets.ModelViewSet):
     queryset = BoardPost.objects.all()
