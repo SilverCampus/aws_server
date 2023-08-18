@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import BoardPost, BoardComment, BoardPostLike, Hashtag
 from campus.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,3 +41,24 @@ class PostUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = BoardPost
         fields = '__all__'
+
+class GetAllBoardPostsSerializer(serializers.ModelSerializer):
+    hashtag_name = serializers.SerializerMethodField()
+    is_liked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BoardPost
+        fields = ['user', 'content', 'video', 'video_thumbnail', 'created_at', 'hashtag_name', 'is_liked']
+        
+
+    def get_hashtag_name(self, obj):
+        return obj.hashtags.name
+    
+    def get_is_liked(self, obj):
+        user = self.context.get('user')
+        try: 
+            boardpostlike = BoardPostLike.objects.get(user=user, post=obj)
+        except ObjectDoesNotExist:
+            return False
+        
+        return True         
