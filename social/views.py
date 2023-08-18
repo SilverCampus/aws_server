@@ -95,6 +95,7 @@ def add_like(request):
     serializer = BoardPostLikeSerializer(like)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 # 4. 로그인한 사용자가 새로운 게시글을 게시하는 API
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated,))
@@ -106,7 +107,16 @@ def post_upload(request):
     content = request.data.get('content')
     image_file = request.FILES.get('image_file')
     video_file = request.FILES.get('video_file')
-    hashtag_ids = request.data.get('hashtags', [])
+    hashtags_name = request.data.get('hashtag')
+
+    # # 해시태그 연결
+    try:
+        hashtag_name = "#" + str(hashtags_name)
+        hashtag = Hashtag.objects.get(name=hashtag_name)
+        
+
+    except Hashtag.DoesNotExist:
+        hashtag = None   
 
     # 게시물 저장
     post = BoardPost(
@@ -115,16 +125,10 @@ def post_upload(request):
         content = content,
         image = image_file,
         video = video_file,
+        hashtags = hashtag
     )
-    post.save() # 이곳에서 먼저 저장해야 ManyToMany 관계가 정상적으로 작동합니다.
-
-    # 해시태그 연결
-    for hashtag_id in hashtag_ids:
-        try:
-            hashtag = Hashtag.objects.get(id=hashtag_id)
-            post.hashtags.add(hashtag)
-        except Hashtag.DoesNotExist:
-            pass  # 존재하지 않는 해시태그 ID인 경우 무시
+    
+    post.save() # BoardPost 객체 저장
 
     # 영상에서 썸네일 생성
     if video_file:
@@ -137,7 +141,7 @@ def post_upload(request):
                 post.image.save(f"thumb_{video_file.name}.png", ContentFile(thumb_file.read()))
                 os.remove(thumbnail_path)  # 임시 썸네일 파일 삭제
 
-    post.save()
+    post.save
 
     serializer = PostUploadSerializer(post)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
