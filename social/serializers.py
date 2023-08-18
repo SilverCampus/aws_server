@@ -8,7 +8,7 @@ class HashtagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class BoardPostSerializer(serializers.ModelSerializer):
-    hashtags = HashtagSerializer(many=True)
+    # hashtags = HashtagSerializer(many=True)
 
     class Meta:
         model = BoardPost
